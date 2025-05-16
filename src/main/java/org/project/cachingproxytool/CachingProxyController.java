@@ -32,13 +32,13 @@ public class CachingProxyController {
             return Mono.just(cached);   // return cached response asynchronously
         }
 
-        String uri = cachingProxyConfig.getOrigin() + request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");   // if there are no queries, append an empty string.
+        String uri = cachingProxyConfig.getOrigin() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");   // if there are no queries, append an empty string.
 
         return webClient.method(HttpMethod.valueOf(request.getMethod()))
                 .uri(uri)
                 .headers(headers -> {
                     for (String name : Collections.list(request.getHeaderNames())) {
-                    headers.addAll(name, Collections.list(request.getHeaders(name)));
+                        headers.addAll(name, Collections.list(request.getHeaders(name)));
                     }
                 })
                 .retrieve()
