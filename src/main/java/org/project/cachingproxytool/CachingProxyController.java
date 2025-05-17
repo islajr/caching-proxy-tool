@@ -1,7 +1,9 @@
 package org.project.cachingproxytool;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +31,10 @@ public class CachingProxyController {
         ResponseEntity<byte[]> cached = cachingService.get(key);
 
         if (cached != null) {
-            return Mono.just(cached);   // return cached response asynchronously
+            HttpHeaders headers = new HttpHeaders();
+            headers.putAll(cached.getHeaders());
+            headers.set("X-Cache", "HIT");
+            return Mono.just(new ResponseEntity<>(cached.getBody(), headers, cached.getStatusCode()));   // return cached response asynchronously
         }
 
         String uri = cachingProxyConfig.getOrigin() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");   // if there are no queries, append an empty string.
@@ -43,7 +48,17 @@ public class CachingProxyController {
                 })
                 .retrieve()
                 .toEntity(byte[].class)
-                .doOnSuccess(response -> cachingService.put(key, response));
+                .map(response -> {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.putAll(response.getHeaders());
+                    headers.set("X-Cache", "MISS");
+                    if (response.getStatusCode().equals(HttpStatusCode.valueOf(200))) { // if successful
+                        cachingService.put(key, response);  // cache values firstly
+                    }
+
+                    return new ResponseEntity<>(response.getBody(), headers, response.getStatusCode());
+
+                });
 
     }
 

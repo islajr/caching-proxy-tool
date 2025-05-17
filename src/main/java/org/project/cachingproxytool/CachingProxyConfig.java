@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "caching-proxy")
+@ConfigurationProperties(prefix = "")
 public class CachingProxyConfig {
 
     private String origin;

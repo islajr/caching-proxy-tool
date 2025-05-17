@@ -32,5 +32,11 @@ public class CachingService {
     // put values in cache
     public void put(String key, ResponseEntity<byte[]> value) {
         cache.put(key, value);
+        System.out.println("Cache successfully updated!");
+    }
+
+    public void clear() {
+        cache.cleanUp();
+        System.out.println("Cache cleared!");
     }
 }
