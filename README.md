@@ -20,7 +20,7 @@ Once inside the repository directory, the next step is to package the applicatio
 
 Depending on your Operating System, you'll need to use different commands:
 
-* Windows
+Windows
 
 
     .\mvnw.cmd clean
@@ -28,7 +28,7 @@ Depending on your Operating System, you'll need to use different commands:
     .\mvnmw.cmd package
 
 
-* Linux and MacOS
+Linux and MacOS
 
 
     ./mvnw clean
@@ -44,8 +44,7 @@ This will clean, compile and package the source code to a **/target** folder wit
 
 To run the application, simply run the command:
 
-
-* Linux and MacOS:
+Linux and MacOS:
 
 
     java -jar /target/caching-proxy-tool-0.0.1-SNAPSHOT.jar caching-proxy --port=<port> --origin=<origin>
